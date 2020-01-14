@@ -1,0 +1,28 @@
+table {
+  width: 150px;
+  height: 200px;
+  margin: 20px auto 0;
+  border: 1px solid black;
+
+  thead {
+    height: 50px;
+  }
+
+  th {
+    font-size: 20px;
+    text-align: right;
+    &.path {
+      font-size: 12px;
+      font-weight: 200;
+      height: 10px;
+      padding: 3px 3px 0 0;
+    }
+  }
+  td {
+    text-align: center;
+    border: 1px solid red;
+    width: 25%;
+    height: 20%;
+    cursor: pointer;
+  }
+}

@@ -1,10 +1,10 @@
 import React from 'react';
-import './App.css';
+import '@csstools/normalize.css';
+import Calculator from './components/Calculator';
 
 function App() {
   return (
-    <div className="App">
-    </div>
+    <Calculator />
   );
 }
 
