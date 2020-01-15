@@ -5,8 +5,11 @@ import Tr from './Tr';
 const Calculator = () => {
   const [path, setPath] = useState('');
   const [number, setNumber] = useState('0');
+
+  const numbers = useRef([]);
   const stack = useRef([]);
   const isOperClicked = useRef(false);
+  const isNumberClicked = useRef(false);
 
   const contents = [
     ['1','2','3','+'],
@@ -17,52 +20,76 @@ const Calculator = () => {
   ];
   const operators = ['+', '-', 'x', '/'];
 
+  const calculate = () => {
+    while(stack.current.length) {
+      const num2 = numbers.current.pop()*1;
+      const num1 = numbers.current.pop()*1;
+      const oper = stack.current.pop();
+      let result = 0;
+      switch (oper) {
+        case '+': result = num1 + num2; break;
+        case '-': result = num1 - num2; break;
+        case 'x': result = num1 * num2; break;
+        case '/': result = num1 / num2; break;
+        default: throw new Error('Invalid');
+      }
+      numbers.current.push(result);
+    }
+  };
+
+  const isLowerPrecedence = (oper) => {
+    if(stack.current.length === 0) return false;
+    const last = stack.current[stack.current.length-1];
+    if(oper === 'x' && (last === '-' || last === '+')) return false;
+    if(oper === '/' && (last === '-' || last === '+')) return false;
+    return true;
+  };
+
   const onClickButton = useCallback((value) => {
     if(Number.isInteger(parseInt(value))) {
       if(isOperClicked.current) {
         setNumber(value);
-        isOperClicked.current = false;
       } else {
         const newNumber = (number === '0' ? value : number + value);
         setNumber(newNumber);
       }
+      isNumberClicked.current = true;
+      isOperClicked.current = false;
     } else if(operators.includes(value)) {
-      if(stack.length && operators.includes.stack[stack.length-1])
-        return;
-      let newPath = '';
-      stack.current.push(number);
+      if(!isNumberClicked.current && stack.current.length === 0) return;
+      else if(isOperClicked.current) return;
+      numbers.current.push(number);
+      if(isLowerPrecedence(value)) {
+        calculate();
+      }
       stack.current.push(value);
-      stack.current.forEach((val) => newPath += (val + ' '));
       isOperClicked.current = true;
-      console.log(newPath);
-      setPath(newPath);
+      isNumberClicked.current = false;
+
+      if(path[path.length-1] === '=') {
+        setPath(number + value);
+      } else {
+        setPath(path + number + value);
+      }
     } else if(value === '←') {
+      if(isOperClicked.current) return;
       const newNumber = number.substring(0, number.length-1);
       setNumber(newNumber);
     } else if(value === 'C') {
       setNumber('0');
+      setPath('');
+      numbers.current = [];
       stack.current = [];
+      isNumberClicked.current = false;
+      isOperClicked.current = false;
     } else if(value === '=') {
-      stack.current.push(number);
-      let ans = 0, oper = '';
-      stack.current.forEach((val) => {
-        if(operators.includes(val)) oper = val;
-        else {
-          val = parseInt(val);
-          switch(oper) {
-            case '': ans = val; break;
-            case '+': ans += val; break;
-            case '-': ans -= val; break;
-            case '*': ans *= val; break;
-            case '/': ans /= val; break;
-            default: throw new Error('Invalid');
-          }
-        }
-      });
-      setNumber(ans);
-      stack.current = [];
+      if(isOperClicked.current) return;
+      numbers.current.push(number);
+      calculate();
+      setPath(path + number + value);
+      setNumber(numbers.current[numbers.current.length-1]);
     }
-  }, [number, operators]);
+  }, [number, operators, path]);
 
   return (
     <table>
