@@ -1,28 +1,53 @@
-table {
-  width: 150px;
-  height: 200px;
-  margin: 20px auto 0;
-  border: 1px solid black;
+@import url('https://fonts.googleapis.com/css?family=Poiret+One&display=swap');
 
-  thead {
-    height: 50px;
-  }
+html,body {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(15,32,39,1) 0%, rgba(32,58,67,1) 50%, rgba(44,83,100,1) 100%);
+}
 
-  th {
-    font-size: 20px;
-    text-align: right;
-    &.path {
-      font-size: 12px;
-      font-weight: 200;
-      height: 10px;
-      padding: 3px 3px 0 0;
+.container {
+  padding-top: 20px;
+  font-family: 'Poiret One', cursive;
+
+  table {
+    width: 150px;
+    height: 250px;
+    margin: 0 auto;
+    border-radius: 3px;
+    background-color: rgba(0,0,0,0.7);
+    box-shadow: black 0px 5px 5px;
+    color: white;
+  
+    thead {
+      height: 50px;
+      border-bottom: 1px solid #bbb;
     }
-  }
-  td {
-    text-align: center;
-    border: 1px solid red;
-    width: 25%;
-    height: 20%;
-    cursor: pointer;
+
+    tr {
+      height: 20%;
+    }
+
+    th {
+      font-size: 20px;
+      text-align: right;
+      padding: 5px 5px;
+      &.path {
+        font-size: 12px;
+        font-weight: 200;
+        height: 10px;
+        line-height: 10px;
+        letter-spacing: 3px;
+      }
+    }
+    td {
+      text-align: center;
+      vertical-align: middle;
+      width: 25%;
+      cursor: pointer;
+      &:last-child {
+        color: rgb(252, 81, 81);
+        font-size: 20px;
+      }
+    }
   }
 }

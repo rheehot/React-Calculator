@@ -11,14 +11,19 @@ const Calculator = () => {
   const isOperClicked = useRef(false);
   const isNumberClicked = useRef(false);
 
+  const PLUS = '+';
+  const MINUS = '-';
+  const MULTIPLICATION = String.fromCharCode('0x00D7');
+  const DIVISION = String.fromCharCode('0x00F7');
+
   const contents = [
-    ['1','2','3','+'],
-    ['4','5','6','-'],
-    ['7','8','9','x'],
-    ['','0','','/'],
+    ['1','2','3',PLUS],
+    ['4','5','6',MINUS],
+    ['7','8','9',MULTIPLICATION],
+    ['','0','',DIVISION],
     ['C','','←','=']
   ];
-  const operators = ['+', '-', 'x', '/'];
+  const operators = [PLUS, MINUS, MULTIPLICATION, DIVISION];
 
   const calculate = () => {
     while(stack.current.length) {
@@ -27,10 +32,10 @@ const Calculator = () => {
       const oper = stack.current.pop();
       let result = 0;
       switch (oper) {
-        case '+': result = num1 + num2; break;
-        case '-': result = num1 - num2; break;
-        case 'x': result = num1 * num2; break;
-        case '/': result = num1 / num2; break;
+        case PLUS: result = num1 + num2; break;
+        case MINUS: result = num1 - num2; break;
+        case MULTIPLICATION: result = num1 * num2; break;
+        case DIVISION: result = num1 / num2; break;
         default: throw new Error('Invalid');
       }
       numbers.current.push(result);
@@ -40,14 +45,17 @@ const Calculator = () => {
   const isLowerPrecedence = (oper) => {
     if(stack.current.length === 0) return false;
     const last = stack.current[stack.current.length-1];
-    if(oper === 'x' && (last === '-' || last === '+')) return false;
-    if(oper === '/' && (last === '-' || last === '+')) return false;
+    if(oper === MULTIPLICATION && (last === MINUS || last === PLUS)) return false;
+    if(oper === DIVISION && (last === MINUS || last === PLUS)) return false;
     return true;
   };
 
   const onClickButton = useCallback((value) => {
     if(Number.isInteger(parseInt(value))) {
       if(isOperClicked.current) {
+        setNumber(value);
+      } else if(path[path.length-1] === '=') {
+        setPath('');
         setNumber(value);
       } else {
         const newNumber = (number === '0' ? value : number + value);
@@ -73,7 +81,13 @@ const Calculator = () => {
       }
     } else if(value === '←') {
       if(isOperClicked.current) return;
-      const newNumber = number.substring(0, number.length-1);
+      let newNumber = '';
+      if(number.length === 1) {
+        newNumber = 0;
+      } else {
+        newNumber = number.substring(0, number.length-1);
+      }
+      isOperClicked.current = true;
       setNumber(newNumber);
     } else if(value === 'C') {
       setNumber('0');
@@ -83,7 +97,7 @@ const Calculator = () => {
       isNumberClicked.current = false;
       isOperClicked.current = false;
     } else if(value === '=') {
-      if(isOperClicked.current) return;
+      if(!isNumberClicked.current) return;
       numbers.current.push(number);
       calculate();
       setPath(path + number + value);
@@ -92,22 +106,24 @@ const Calculator = () => {
   }, [number, operators, path]);
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th className="path" colSpan="4">
-            {path}
-          </th>
-        </tr>
-        <tr>
-          <th colSpan="4">{number}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {contents.map((cols) => 
-          <Tr key={cols.toString()} cols={cols} handler={onClickButton} />)}
-      </tbody>
-    </table>
+    <div className="container">
+      <table>
+        <thead>
+          <tr>
+            <th className="path" colSpan="4">
+              {path}
+            </th>
+          </tr>
+          <tr>
+            <th colSpan="4">{number}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {contents.map((cols) => 
+            <Tr key={cols.toString()} cols={cols} handler={onClickButton} />)}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

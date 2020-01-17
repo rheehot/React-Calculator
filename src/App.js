@@ -1,8 +1,8 @@
 import React from 'react';
-import '@csstools/normalize.css';
 import Calculator from './components/Calculator';
+import 'reset-css';
 
-function App() {
+const App = () => {
   return (
     <Calculator />
   );
