@@ -1,85 +1,47 @@
 import React, { useState, useCallback, useRef } from 'react';
 import '../styles/Calculator.scss';
+import { contents } from '../constants';
+import * as Calculate from '../logics/calculate';
 import Tr from './Tr';
 
 const Calculator = () => {
   const [path, setPath] = useState('');
   const [number, setNumber] = useState('0');
 
-  const numbers = useRef([]);
-  const stack = useRef([]);
   const isOperClicked = useRef(false);
   const isNumberClicked = useRef(false);
 
-  const PLUS = '+';
-  const MINUS = '-';
-  const MULTIPLICATION = String.fromCharCode('0x00D7');
-  const DIVISION = String.fromCharCode('0x00F7');
 
-  const contents = [
-    ['1','2','3',PLUS],
-    ['4','5','6',MINUS],
-    ['7','8','9',MULTIPLICATION],
-    ['','0','',DIVISION],
-    ['C','','←','=']
-  ];
-  const operators = [PLUS, MINUS, MULTIPLICATION, DIVISION];
-
-  const calculate = () => {
-    while(stack.current.length) {
-      const num2 = numbers.current.pop()*1;
-      const num1 = numbers.current.pop()*1;
-      const oper = stack.current.pop();
-      let result = 0;
-      switch (oper) {
-        case PLUS: result = num1 + num2; break;
-        case MINUS: result = num1 - num2; break;
-        case MULTIPLICATION: result = num1 * num2; break;
-        case DIVISION: result = num1 / num2; break;
-        default: throw new Error('Invalid');
-      }
-      numbers.current.push(result);
-    }
-  };
-
-  const isLowerPrecedence = (oper) => {
-    if(stack.current.length === 0) return false;
-    const last = stack.current[stack.current.length-1];
-    if(oper === MULTIPLICATION && (last === MINUS || last === PLUS)) return false;
-    if(oper === DIVISION && (last === MINUS || last === PLUS)) return false;
-    return true;
-  };
-
-  const onClickButton = useCallback((value) => {
-    if(Number.isInteger(parseInt(value))) {
+  const onClickButton = useCallback((clicked) => {
+    if(Calculate.isNumber(clicked)) {
       if(isOperClicked.current) {
-        setNumber(value);
+        setNumber(clicked);
       } else if(path[path.length-1] === '=') {
         setPath('');
-        setNumber(value);
+        setNumber(clicked);
       } else {
-        const newNumber = (number === '0' ? value : number + value);
+        const newNumber = (number === '0' ? clicked : number + clicked);
         setNumber(newNumber);
       }
       isNumberClicked.current = true;
       isOperClicked.current = false;
-    } else if(operators.includes(value)) {
-      if(!isNumberClicked.current && stack.current.length === 0) return;
+    } else if(Calculate.isOperator(clicked)) {
+      if(!isNumberClicked.current && Calculate.operatorStack.length === 0) return;
       else if(isOperClicked.current) return;
-      numbers.current.push(number);
-      if(isLowerPrecedence(value)) {
-        calculate();
+      Calculate.numberArray.current.push(number);
+      if(Calculate.isLowerPrecedence(clicked)) {
+        Calculate.calculateTillNow();
       }
-      stack.current.push(value);
+      Calculate.operatorStack.push(clicked);
       isOperClicked.current = true;
       isNumberClicked.current = false;
 
       if(path[path.length-1] === '=') {
-        setPath(number + value);
+        setPath(number + clicked);
       } else {
-        setPath(path + number + value);
+        setPath(path + number + clicked);
       }
-    } else if(value === '←') {
+    } else if(Calculate.isErase(clicked)) {
       if(isOperClicked.current) return;
       let newNumber = '';
       if(number.length === 1) {
@@ -89,21 +51,21 @@ const Calculator = () => {
       }
       isOperClicked.current = true;
       setNumber(newNumber);
-    } else if(value === 'C') {
+    } else if(Calculate.isClear(clicked)) {
       setNumber('0');
       setPath('');
-      numbers.current = [];
-      stack.current = [];
+      Calculate.numberArray = [];
+      Calculate.operatorStack = [];
       isNumberClicked.current = false;
       isOperClicked.current = false;
-    } else if(value === '=') {
+    } else if(Calculate.isEqual(clicked)) {
       if(!isNumberClicked.current) return;
-      numbers.current.push(number);
-      calculate();
-      setPath(path + number + value);
-      setNumber(numbers.current[numbers.current.length-1]);
+      Calculate.numberArray.push(number);
+      Calculate.calculateTillNow();
+      setPath(path + number + clicked);
+      setNumber(Calculate.numberArray[Calculate.numberArray.length-1]);
     }
-  }, [number, operators, path]);
+  }, [number, path]);
 
   return (
     <div className="container">
