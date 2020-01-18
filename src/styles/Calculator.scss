@@ -11,8 +11,8 @@ html,body {
 }
 
 .calculator {
-  width: 150px;
-  height: 250px;
+  width: 350px;
+  height: 550px;
   margin: 0 auto;
   border-radius: 3px;
   background-color: rgba(0,0,0,0.7);
@@ -35,16 +35,19 @@ html,body {
     }
   }
 
+  $path-height: 6%;
+  $number-height: 12%;
   &__path {
-    height: 10px;
-    line-height: 10px;
-    font-size: 12px;
+    height: $path-height;
+    line-height: 100%;
+    font-size: 30px;
     font-weight: 200;
   }
 
+  $number-font-size: 50px;
   &__number {
-    height: 30px;
-    font-size: 20px;
+    height: $number-height;
+    font-size: $number-font-size;
     text-align: right;
     border-bottom: 1px solid #bbb;
     box-sizing: border-box;
@@ -53,7 +56,8 @@ html,body {
   &__panel {
     display: flex;
     flex-direction: column;
-    height: 210px;
+    height: 100% - ($path-height + $number-height);
+    font-size: $number-font-size;
 
     &-row {
       display: flex;
