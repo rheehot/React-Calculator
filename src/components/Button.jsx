@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Tr = ({ cols, handler }) => {
+const Button = ({ cols, handler }) => {
 
   return (
     <div className="calculator__panel-row">
@@ -16,9 +16,9 @@ const Tr = ({ cols, handler }) => {
   )
 };
 
-Tr.propTypes = {
+Button.propTypes = {
   cols: PropTypes.array.isRequired,
   handler: PropTypes.func.isRequired,
 };
 
-export default Tr;
+export default Button;
