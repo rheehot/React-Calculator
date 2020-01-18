@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import '../styles/Calculator.scss';
 import { contents } from '../constants';
 import calculate from '../logics/calculate';
-import Tr from './Tr';
+import Button from './Button';
 
 const Calculator = () => {
   const [info, setInfo] = useState({
@@ -11,29 +11,25 @@ const Calculator = () => {
     oper: null,
   });
 
-  const onClickButton = useCallback((clicked) => {
+  const onClickButton = (clicked) => {
     const newState = calculate(info, clicked);
     setInfo(newState);
-  }, [info]);
+  };
 
   return (
     <div className="container">
-      <table>
-        <thead>
-          <tr>
-            <th className="path" colSpan="4">
-              {info.path}
-            </th>
-          </tr>
-          <tr>
-            <th colSpan="4">{parseInt(info.number).toLocaleString()}</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div className="calculator">
+        <div className="calculator__path">
+          {info.path}
+        </div>
+        <div className="calculator__number">
+          {parseInt(info.number).toLocaleString()}
+        </div>
+        <div className="calculator__panel">
           {contents.map((cols) => 
-            <Tr key={cols.toString()} cols={cols} handler={onClickButton} />)}
-        </tbody>
-      </table>
+            <Button key={cols.toString()} cols={cols} handler={onClickButton} />)}
+        </div>
+      </div>
     </div>
   );
 }

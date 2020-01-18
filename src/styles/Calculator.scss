@@ -8,45 +8,67 @@ html,body {
 .container {
   padding-top: 20px;
   font-family: 'Poiret One', cursive;
+}
 
-  table {
-    width: 150px;
-    height: 250px;
-    margin: 0 auto;
-    border-radius: 3px;
-    background-color: rgba(0,0,0,0.7);
-    box-shadow: black 0px 5px 5px;
-    color: white;
-  
-    thead {
-      height: 50px;
-      border-bottom: 1px solid #bbb;
+.calculator {
+  width: 150px;
+  height: 250px;
+  margin: 0 auto;
+  border-radius: 3px;
+  background-color: rgba(0,0,0,0.7);
+  box-shadow: black 0px 5px 5px;
+  color: white;
+
+  &__path, &__number {
+    letter-spacing: 3px;
+    padding: 5px;
+    text-align: right;
+    overflow-x: auto;
+    overflow-y: hidden;
+    &::-webkit-scrollbar {
+      width: 24px;
+      height: 2px;
     }
+    &::-webkit-scrollbar-thumb {
+      background-color: #817e7e;
+      border-radius: 3px;
+    }
+  }
 
-    tr {
+  &__path {
+    height: 10px;
+    line-height: 10px;
+    font-size: 12px;
+    font-weight: 200;
+  }
+
+  &__number {
+    height: 30px;
+    font-size: 20px;
+    text-align: right;
+    border-bottom: 1px solid #bbb;
+    box-sizing: border-box;
+  }
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    height: 210px;
+
+    &-row {
+      display: flex;
+      flex-direction: row;
       height: 20%;
+      align-items: center;
     }
 
-    th {
-      font-size: 20px;
-      text-align: right;
-      padding: 5px 5px;
-      letter-spacing: 3px;
-      &.path {
-        font-size: 12px;
-        font-weight: 200;
-        height: 10px;
-        line-height: 10px;
-      }
-    }
-    td {
+    &-button {
+      flex: 1;
       text-align: center;
-      vertical-align: middle;
-      width: 25%;
       cursor: pointer;
+
       &:last-child {
-        color: rgb(252, 81, 81);
-        font-size: 20px;
+        color: rgb(253, 56, 56);
       }
     }
   }
